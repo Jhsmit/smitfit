@@ -1,7 +1,9 @@
 # %%
 
 import numpy as np
-from smitfit.loss import MSELoss
+import ultraplot as uplt
+
+from smitfit.loss import SELoss
 from smitfit.minimize import Minimize
 from smitfit.model import Model
 from smitfit.symbol import Symbols
@@ -15,29 +17,25 @@ model = Model({s.y: s.a * s.x + s.b})  # type: ignore
 np.random.seed(43)
 gt = {"a": 0.15, "b": 2.5}
 
-xdata = np.linspace(0, 11, num=100)
-ydata = gt["a"] * xdata + gt["b"]
+x_arr = np.linspace(0, 11, num=100)
+y_arr = gt["a"] * x_arr + gt["b"]
 
-noise = np.random.normal(0, scale=ydata / 10.0 + 0.2)
-ydata += noise
+noise = np.random.normal(0, scale=y_arr / 10.0 + 0.2)
+y_arr += noise
+
+xdata, ydata = {"x": x_arr}, {"y": y_arr}
+
 # %%
 parameters = model.define_parameters("a b")
-parameters
-# %%
-
-loss = MSELoss(model, dict(y=ydata))
-objective = Minimize(loss, parameters, dict(x=xdata))
-result = objective.fit()
-result
-
+loss = SELoss(model, ydata)
+minimize = Minimize(loss, parameters, xdata)
+result = minimize.fit()
 # %%
 # %%
 # compare to numpy polyfit
-np.polyfit(xdata, ydata, deg=1)
-
+np.polyfit(xdata["x"], ydata["y"], deg=1)
 
 # %%
-import ultraplot as uplt
 
 fig, ax = uplt.subplots()
 ax.scatter(xdata, ydata)
