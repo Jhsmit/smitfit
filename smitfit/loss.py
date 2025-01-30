@@ -19,6 +19,11 @@ class SELoss(Loss):
         self.y_data = y_data
         self.weights = weights or {}
 
+    def residuals(self, **kwargs):
+        y_model = self.model(**kwargs)
+
+        return {k: y_model[k] - self.y_data[k] for k in self.y_data.keys()}
+
     def squares(self, **kwargs):
         y_model = self.model(**kwargs)
 
