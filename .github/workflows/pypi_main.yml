@@ -1,5 +1,7 @@
 name: PyPi distribute main release
-on: [release]
+on: 
+  release:
+    types: [published]  # Only run on published releases
 
 jobs:
   build-n-publish:
