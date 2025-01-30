@@ -4,6 +4,7 @@ from functools import reduce
 from typing import Any, Iterable, Optional, OrderedDict, Union
 
 import numpy as np
+
 from smitfit.parameter import Parameter
 
 
