@@ -1,11 +1,10 @@
 # %%
 
 import numpy as np
-
-from smit.loss import MSELoss
-from smit.minimize import Minimize
-from smit.model import Model
-from smit.symbol import Symbols
+from smitfit.loss import MSELoss
+from smitfit.minimize import Minimize
+from smitfit.model import Model
+from smitfit.symbol import Symbols
 
 # %%
 

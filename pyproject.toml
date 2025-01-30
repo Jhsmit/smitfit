@@ -3,10 +3,10 @@ requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
-name = "smit"
+name = "smitfit"
 description = "Symbolic Model Inference Toolkit"
 authors = [
-  { name = "Jochem Smit", email = "jhsmit@gmail.com" },
+  { name = "Jochem smitfit", email = "jhsmitfit@gmail.com" },
 ]
 readme = "README.md"
 license = {file = "LICENSE" }
@@ -31,7 +31,7 @@ test = [
 ]
 
 [project.urls]
-Source = "https://github.com/Jhsmit/smit/"
+Source = "https://github.com/Jhsmitfit/smitfit/"
 
 [tool.hatch.build]
 exclude = [
@@ -42,7 +42,7 @@ exclude = [
 source = "vcs"
 
 [tool.hatch.build.hooks.vcs]
-version-file = "smit/_version.py"
+version-file = "smitfit/_version.py"
 
 [tool.flake8]
 max-line-length = 100

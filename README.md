@@ -1,2 +1,2 @@
-# smit
-S.M.I.T.: Symbolic Model Inference Toolkit
+# smitfit
+S.M.I.T.F.I.T. Symbolic Model Integration Tool For Inference Tasks

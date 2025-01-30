@@ -2,11 +2,10 @@ from __future__ import annotations
 
 import numpy as np
 from scipy.optimize import minimize
-
-from smit.fitresult import FitResult
-from smit.loss import Loss, SELoss
-from smit.parameter import Parameters, pack, unpack
-from smit.utils import flat_concat
+from smitfit.fitresult import FitResult
+from smitfit.loss import Loss, SELoss
+from smitfit.parameter import Parameters, pack, unpack
+from smitfit.utils import flat_concat
 
 
 class Minimize:  # = currently only scipy minimize

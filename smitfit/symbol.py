@@ -1,8 +1,7 @@
 import numpy as np
 import numpy.typing as npt
 import sympy as sp
-
-from smit.utils import Optional
+from smitfit.utils import Optional
 
 
 class Symbols(dict):

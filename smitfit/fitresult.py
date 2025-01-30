@@ -8,8 +8,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Optional, Union
 
 import numpy as np
-
-from smit.utils import clean_types, rgetattr
+from smitfit.utils import clean_types, rgetattr
 
 
 @dataclass

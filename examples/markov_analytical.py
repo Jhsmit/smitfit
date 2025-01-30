@@ -7,13 +7,12 @@ from __future__ import annotations
 import numpy as np
 import sympy as sp
 import ultraplot as uplt
-
-from smit.loss import MSELoss
-from smit.markov import extract_states, generate_transition_matrix
-from smit.minimize import Minimize
-from smit.model import Model
-from smit.parameter import Parameters
-from smit.symbol import symbol_matrix
+from smitfit.loss import MSELoss
+from smitfit.markov import extract_states, generate_transition_matrix
+from smitfit.minimize import Minimize
+from smitfit.model import Model
+from smitfit.parameter import Parameters
+from smitfit.symbol import symbol_matrix
 
 # %%
 np.random.seed(43)

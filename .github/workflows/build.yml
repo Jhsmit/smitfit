@@ -28,6 +28,6 @@ jobs:
         source .venv/bin/activate
         uv pip install dist/*.tar.gz
 
-    - name: Run python, import package 'smit'
-      run: python -c "import smit"
+    - name: Run python, import package 'smitfit'
+      run: python -c "import smitfit"
       

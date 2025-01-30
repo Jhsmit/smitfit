@@ -4,11 +4,10 @@ import re
 from typing import Iterable
 
 import sympy as sp
+from smitfit.expr import as_expr
+from smitfit.parameter import Parameter, Parameters
+from smitfit.typing import Numerical
 from toposort import toposort
-
-from smit.expr import as_expr
-from smit.parameter import Parameter, Parameters
-from smit.typing import Numerical
 
 
 class Model:

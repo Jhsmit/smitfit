@@ -6,8 +6,7 @@ from typing import Callable, Union
 
 import numpy as np
 import sympy as sp
-
-from smit.typing import Numerical
+from smitfit.typing import Numerical
 
 
 # %%

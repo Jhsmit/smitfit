@@ -4,8 +4,7 @@ from functools import reduce
 from typing import Any, Iterable, Optional, OrderedDict, Union
 
 import numpy as np
-
-from smit.parameter import Parameter
+from smitfit.parameter import Parameter
 
 
 def flat_concat(data: dict[str, np.ndarray]) -> np.ndarray:

@@ -1,7 +1,7 @@
 from typing import Optional
 
-from smit.model import Model
-from smit.reduce import mean_reduction, sum_reduction
+from smitfit.model import Model
+from smitfit.reduce import mean_reduction, sum_reduction
 
 
 class Loss:

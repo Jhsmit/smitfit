@@ -6,8 +6,7 @@ from typing import Optional
 import numpy as np
 import sympy as sp
 from scipy.integrate import solve_ivp
-
-from smit.expr import Expr, as_expr
+from smitfit.expr import Expr, as_expr
 
 
 class CompositeExpr(Expr):

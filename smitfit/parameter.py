@@ -5,8 +5,7 @@ from typing import Iterable, Optional, Sequence, Union
 
 import numpy as np
 import sympy as sp
-
-from smit.typing import Numerical
+from smitfit.typing import Numerical
 
 
 @dataclass
