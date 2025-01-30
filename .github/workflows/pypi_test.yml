@@ -27,19 +27,17 @@ jobs:
         # Get the current date components (YYYYMMDD)
         DATE=$(date +%Y%m%d)
         
-        # Get number of commits today
-        COMMITS_TODAY=$(git rev-list --after="00:00" --count HEAD)
-        
         # Get short SHA for uniqueness
         SHA=$(git rev-parse --short HEAD)
         
-        # Create version in format: YYYY.MM.DD.devN+SHA
-        # This follows PEP 440 development release format
+        # Create version in format: YYYY.MM.DD.dev0+{unix_timestamp}.{sha}
+        # This follows PEP 440 and Hatch's expectations
         YEAR=${DATE:0:4}
         MONTH=${DATE:4:2}
         DAY=${DATE:6:2}
         
-        VERSION="${YEAR}.${MONTH}.${DAY}.dev${COMMITS_TODAY}+${SHA}"
+        TIMESTAMP=$(date +%s)
+        VERSION="${YEAR}.${MONTH}.${DAY}.dev0+${TIMESTAMP}.${SHA}"
         
         # Create and push tag
         git tag -a "v${VERSION}" -m "Test release ${VERSION}"
