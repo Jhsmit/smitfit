@@ -85,6 +85,10 @@ class Parameters:
     def guess(self) -> dict[str, Numerical]:  # other types?
         return {p.name: np.asarray(p.guess) for p in self}
 
+    @property
+    def shapes(self) -> dict[str, tuple]:
+        return {p.name: p.shape for p in self}
+
     def fix(self, *names: str) -> Parameters:
         """Fix specified parameters"""
         for name in names:
@@ -129,7 +133,7 @@ class Parameters:
         return f"Parameters({list(self._parameters.values())})"
 
 
-def unpack(x: np.ndarray, shapes: dict[str, tuple[int, ...]]) -> dict[str, Numerical]:
+def unpack(x: np.ndarray, shapes: dict[str, tuple[int, ...]]) -> dict[str, np.ndarray]:
     """Unpack a ndim 1 array of concatenated parameter values into a dictionary of
     parameter name: parameter_value where parameter values are cast back to their
     specified shapes.
@@ -143,8 +147,8 @@ def unpack(x: np.ndarray, shapes: dict[str, tuple[int, ...]]) -> dict[str, Numer
 
 
 def pack(
-    parameter_values: Iterable[np.ndarray],
+    parameter_values: Iterable[Numerical],
 ) -> np.ndarray:  # todo iterable numerical dtype input
     """Pack a dictionary of parameter_name together as array"""
 
-    return np.concatenate(tuple(param_value.ravel() for param_value in parameter_values))
+    return np.concatenate(tuple(np.array(param_value).ravel() for param_value in parameter_values))
