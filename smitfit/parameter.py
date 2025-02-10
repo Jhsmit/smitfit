@@ -56,11 +56,8 @@ class Parameters:
     def __init__(self, parameters: Iterable[Parameter]):
         self._parameters = {p.name: p for p in parameters}
 
-    def __getitem__(self, key: Union[str, Sequence[str]]) -> Union[Parameter, Parameters]:
-        """Get a parameter or create a new ParameterSet with selected parameters"""
-        if isinstance(key, str):
-            return self._parameters[key]
-        return Parameters([self._parameters[k] for k in key])
+    def __getitem__(self, key: str) -> Parameter:
+        return self._parameters[key]
 
     def __iter__(self):
         return iter(self._parameters.values())
