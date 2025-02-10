@@ -3,19 +3,21 @@
 """
 estimating erros by bootstrapping
 https://stackoverflow.com/questions/14581358/getting-standard-errors-on-fitted-parameters-using-the-optimize-leastsq-method-i
+
+See also
+Efron, B. & Tibshirani, R. An Introduction to the Bootstrap (Chapman & Hall, 1993).
+
 """
 
 # %%
 
-import numdifftools as nd
 import numpy as np
-import ultraplot as uplt
 
 from smitfit.error import bootstrap
 from smitfit.loss import SELoss
 from smitfit.minimize import Minimize
 from smitfit.model import Model
-from smitfit.parameter import pack, unpack
+from smitfit.parameter import unpack
 from smitfit.symbol import Symbols
 from smitfit.utils import flat_concat
 
@@ -68,6 +70,9 @@ param_array = bootstrap(
 N_sigma = 1.0
 errors = N_sigma * np.std(param_array, axis=0)
 errors = unpack(errors, {p.name: p.shape for p in parameters})
-errors
+print(errors)
 
 # %%
+
+print("fit result errors")
+print(result.errors)
