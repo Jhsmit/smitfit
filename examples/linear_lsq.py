@@ -27,9 +27,12 @@ xdata, ydata = {"x": x_arr}, {"y": y_arr}
 
 # %%
 parameters = model.define_parameters("a b")
+
+# %%
 loss = SELoss(model, ydata)
 minimize = Minimize(loss, parameters, xdata)
 result = minimize.fit()
+result.parameters
 # %%
 # %%
 # compare to numpy polyfit
@@ -38,7 +41,7 @@ np.polyfit(xdata["x"], ydata["y"], deg=1)
 # %%
 
 fig, ax = uplt.subplots()
-ax.scatter(xdata, ydata)
-ax.plot(xdata, model(**result.parameters, x=xdata)["y"], color="r")
+ax.scatter(xdata["x"], ydata["y"])
+ax.plot(xdata["x"], model(**result.parameters, x=xdata)["y"], color="r")
 
 # %%
