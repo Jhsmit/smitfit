@@ -16,7 +16,7 @@ class Parameter:
     symbol: sp.Symbol
     guess: Numerical = 1.0
     bounds: tuple[Optional[Numerical], Optional[Numerical]] = (None, None)
-    fixed: bool = False
+    fixed: bool = False  # TODO fixed per array element?
 
     @property
     def name(self) -> str:
