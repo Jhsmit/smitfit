@@ -19,17 +19,9 @@ class Minimize:  # = currently only scipy minimize
         parameters = unpack(x, self.shapes)
         return self.loss(**parameters, **self.xdata)
 
-    @property
-    def free_parameters(self):
-        return [p for p in self.parameters if not p.fixed]
-
-    @property
-    def fixed_parameters(self):
-        return [p for p in self.parameters if p.fixed]
-
     def get_bounds(self) -> list[tuple[float | None, float | None]] | None:
         bounds = []
-        for p in self.free_parameters:
+        for p in self.parameters.free:
             size = np.prod(p.shape, dtype=int)
             bounds += [p.bounds] * size
 
