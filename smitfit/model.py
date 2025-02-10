@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 import re
+from fnmatch import fnmatch
 from typing import Iterable
 
 import sympy as sp
+from toposort import toposort
+
 from smitfit.expr import as_expr
 from smitfit.parameter import Parameter, Parameters
 from smitfit.typing import Numerical
-from toposort import toposort
 
 
 class Model:
@@ -40,7 +42,18 @@ class Model:
         if parameters == "*":
             params = [Parameter(symbol) for symbol in self.x_symbols]
         elif isinstance(parameters, str):
-            params = [Parameter(symbols[k]) for k in re.split(r"; |, |\*|\s+", parameters)]
+            if "*" in parameters:  # fnmatch
+                params = [
+                    Parameter(symbol)
+                    for symbol in self.x_symbols
+                    if fnmatch(symbol.name, parameters)
+                ]
+            else:
+                # split by comma, whiteplace, etc
+                params = [Parameter(symbols[k.strip()]) for k in re.split(r"[,;\s]+", parameters)]
+
+        elif isinstance(parameters, Iterable):
+            params = [Parameter(symbols[k]) for k in parameters]
         elif isinstance(parameters, dict):
             params = [Parameter(symbols[k], guess=v) for k, v in parameters.items()]
         else:
