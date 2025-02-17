@@ -52,10 +52,10 @@ class Model:
                 # split by comma, whiteplace, etc
                 params = [Parameter(symbols[k.strip()]) for k in re.split(r"[,;\s]+", parameters)]
 
-        elif isinstance(parameters, Iterable):
-            params = [Parameter(symbols[k]) for k in parameters]
         elif isinstance(parameters, dict):
             params = [Parameter(symbols[k], guess=v) for k, v in parameters.items()]
+        elif isinstance(parameters, Iterable):
+            params = [Parameter(symbols[k]) for k in parameters]
         else:
             raise TypeError("Invalid type")
 
