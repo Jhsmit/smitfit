@@ -109,9 +109,21 @@ class SympyMatrixExpr(Expr):
         return out
 
 
+def str_to_expr(s: str) -> SympyExpr:
+    sp_expr = sp.parse_expr(s, evaluate=False)
+    if isinstance(sp_expr, sp.Equality):
+        return SympyExpr(sp_expr.lhs - sp_expr.rhs)  # type: ignore
+    elif isinstance(sp_expr, sp.Expr):
+        return SympyExpr(sp_expr)
+    else:
+        raise ValueError(f"Invalid string expression: {s!r}")
+
+
 def as_expr(expr) -> Expr | dict[str, Expr]:
     if isinstance(expr, Expr):
         return expr
+    elif isinstance(expr, str):
+        return str_to_expr(expr)
     elif isinstance(expr, (float, np.ndarray)):  # torch tensor, ...
         return Expr(expr)
     elif isinstance(expr, sp.MatrixBase):
