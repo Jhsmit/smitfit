@@ -7,18 +7,40 @@ from typing import Iterable
 import sympy as sp
 from toposort import toposort
 
-from smitfit.expr import as_expr
+from smitfit.expr import Expr, as_expr
 from smitfit.parameter import Parameter, Parameters
 from smitfit.typing import Numerical
 
 
+def parse_model_str(model: Iterable[str]) -> dict[sp.Symbol, sp.Expr]:
+    model_dict = {}
+    for s in model:
+        eq = sp.parse_expr(s, evaluate=False)
+        if not isinstance(eq.lhs, sp.Symbol):
+            raise ValueError("lhs must be a symbol")
+        if not isinstance(eq.rhs, sp.Expr):
+            raise ValueError("rhs must be an expression")
+
+        model_dict[eq.lhs] = eq.rhs
+
+    return model_dict
+
+
 class Model:
-    def __init__(self, model: dict) -> None:
-        self.model = model
+    def __init__(self, model: dict[sp.Symbol, sp.Expr | Expr] | Iterable[str] | str) -> None:
+        if isinstance(model, dict):
+            self.model = model
+        elif isinstance(model, str):
+            self.model = parse_model_str([model])
+        elif isinstance(model, Iterable):
+            self.model = parse_model_str(model)
+        else:
+            raise ValueError("Invalid type")
+
         self.expr: dict = {k: as_expr(v) for k, v in self.model.items()}
         topology = {k: v.symbols for k, v in self.expr.items()}
         self.call_stack = [
-            elem for subset in toposort(topology) for elem in subset if elem in model.keys()
+            elem for subset in toposort(topology) for elem in subset if elem in self.model.keys()
         ]
 
     @property

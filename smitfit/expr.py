@@ -111,7 +111,7 @@ class SympyMatrixExpr(Expr):
 
 def str_to_expr(s: str) -> SympyExpr:
     sp_expr = sp.parse_expr(s, evaluate=False)
-    if isinstance(sp_expr, sp.Equality):
+    if isinstance(sp_expr, sp.Equality):  # this is a special case for root finding
         return SympyExpr(sp_expr.lhs - sp_expr.rhs)  # type: ignore
     elif isinstance(sp_expr, sp.Expr):
         return SympyExpr(sp_expr)
