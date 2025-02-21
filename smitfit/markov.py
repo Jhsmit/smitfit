@@ -10,7 +10,6 @@ OPERATORS = ["<->", "<-", "->"]
 def generate_transition_matrix(
     connectivity: list[str],
     parameter_prefix="k",
-    check_mass_balance=True,
     symbol_class: Type[Symbol] = Symbol,
 ) -> Matrix:
     all_states = extract_states(connectivity)
