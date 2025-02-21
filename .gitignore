@@ -172,3 +172,6 @@ cython_debug/
 
 # hatch generated
 _version.py
+
+# wip files
+examples/wip/
