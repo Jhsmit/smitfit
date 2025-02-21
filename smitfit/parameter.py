@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable, Optional, Sequence, Union
+from typing import Iterable, Optional
 
 import numpy as np
+import numpy.typing as npt
 import sympy as sp
 
 from smitfit.typing import Numerical
@@ -130,7 +131,7 @@ class Parameters:
         return f"Parameters({list(self._parameters.values())})"
 
 
-def unpack(x: np.ndarray, shapes: dict[str, tuple[int, ...]]) -> dict[str, np.ndarray]:
+def unpack(x: npt.ArrayLike, shapes: dict[str, tuple[int, ...]]) -> dict[str, np.ndarray]:
     """Unpack a ndim 1 array of concatenated parameter values into a dictionary of
     parameter name: parameter_value where parameter values are cast back to their
     specified shapes.

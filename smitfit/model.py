@@ -57,6 +57,7 @@ class Model:
             resolved[key.name] = self.expr[key](**kwargs, **resolved)
         return resolved
 
+    # TODO copy/paste code with Function -> baseclass
     def define_parameters(
         self, parameters: dict[str, Numerical] | Iterable[str] | str = "*"
     ) -> Parameters:

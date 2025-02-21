@@ -31,9 +31,9 @@ class FitResult:
     guess: Optional[dict] = None
     """Initial guesses"""
 
-    minimizer: Optional[Minimizer] = None
+    minimizer: Optional[Minimizer] = None  # remove?
 
-    hessian: Optional[np.ndarray] = None
+    hessian: Optional[np.ndarray] = None  # remove?
 
     metadata: dict = field(default_factory=dict)
     """Additional metadata"""
