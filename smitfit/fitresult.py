@@ -31,10 +31,6 @@ class FitResult:
     guess: Optional[dict] = None
     """Initial guesses"""
 
-    minimizer: Optional[Minimizer] = None  # remove?
-
-    hessian: Optional[np.ndarray] = None  # remove?
-
     metadata: dict = field(default_factory=dict)
     """Additional metadata"""
 
@@ -78,12 +74,11 @@ class FitResult:
         keys = [
             "gof_qualifiers",
             "fit_parameters",
+            "errors",
             "fixed_parameters",
             "guess",
             "metadata",
         ]
-        if self.hessian is not None:
-            keys += ["stdev"]
 
         d = {k: v for k in keys if (v := getattr(self, k)) is not None}
 
@@ -101,53 +96,6 @@ class FitResult:
         import yaml
 
         Path(path).write_text(yaml.dump(self.to_dict(), sort_keys=sort_keys))
-
-    def to_pickle(self, path: Union[os.PathLike[str], str]) -> None:
-        """
-        Save the fit result as pickle.
-
-        Args:
-            path: Path to save to.
-        """
-        try:
-            del self.minimizer.model.numerical
-        except AttributeError:
-            pass
-
-        with Path(path).open("wb") as f:
-            pickle.dump(self, f)
-
-    def eval_hessian(self, hessian: Optional[Hessian] = None) -> np.ndarray:
-        # TODO Hessian as parameter / strategy
-        """Evaluate the hessian at the fitted parameters values"""
-
-        hessian = hessian or rgetattr(self.minimizer, "objective.hessian", None)
-        if hessian is None:
-            raise ValueError("No Hessian available")
-
-        if hasattr(self.minimizer, "objective") and list(hessian.shapes.items()) != list(
-            self.minimizer.objective.shapes.items()
-        ):
-            raise ValueError("Mismatch between objective and fit parameters")
-
-        x = pack(self.fit_parameters.values())
-        self.hessian = hessian(x)
-
-        return self.hessian
-
-    @property
-    def variance(self) -> dict[str, float | np.ndarray]:
-        if self.hessian is None:
-            self.eval_hessian()
-
-        hess_inv = np.linalg.inv(self.hessian)
-        var = np.diag(hess_inv)
-        parameter_shapes = {k: v.shape for k, v in self.fit_parameters.items()}
-        return unpack(var, parameter_shapes)
-
-    @property
-    def stdev(self) -> dict[str, float | np.ndarray]:
-        return {k: np.sqrt(v) for k, v in self.variance.items()}
 
     @property
     def parameters(self) -> dict[str, float | np.ndarray]:
