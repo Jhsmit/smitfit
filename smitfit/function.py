@@ -30,8 +30,6 @@ class Function:
             self.y = sp.Symbol("y")
             self.expr = as_expr(func)
 
-        print(self.expr)
-
     def __call__(self, **kwargs):
         return self.expr(**kwargs)  # type: ignore
 
