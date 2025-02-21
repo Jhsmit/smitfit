@@ -6,7 +6,9 @@ from scipy.optimize import curve_fit
 
 
 class CurveFit:
-    def __init__(self, func: Function, xdata: dict, ydata: dict, parameters: Parameters):
+    def __init__(
+        self, func: Function, xdata: dict, ydata: dict, parameters: Parameters
+    ):
         self.func = func
         self.xdata = xdata
         self.ydata = ydata
@@ -22,15 +24,28 @@ class CurveFit:
         ydata = self.ydata[self.func.y.name]
         xdata = np.stack(list(self.xdata.values()))
 
-        popt, pcov, infodict, mesg, ier = curve_fit(self.f, xdata, ydata, p0=p0, full_output=True)
+        popt, pcov, infodict, mesg, ier = curve_fit(
+            self.f, xdata, ydata, p0=p0, full_output=True
+        )
         base_result = dict(popt=popt, pcov=pcov, infodict=infodict, mesg=mesg, ier=ier)
 
         errors = unpack(np.sqrt(np.diag(pcov)), self.parameters.free.shapes)
         parameters = unpack(popt, self.parameters.free.shapes)
 
+        f = self.func(**self.xdata, **parameters, **self.parameters.fixed.guess)
+        y = self.ydata[self.func.y.name]
+
+        gof_qualifiers = {}
+        gof_qualifiers["r_squared"] = 1 - np.sum((y - f) ** 2) / np.sum(
+            (y - np.mean(y)) ** 2
+        )
+        residuals = infodict["fvec"]
+        gof_qualifiers["loss"] = np.sum(residuals**2)
+        gof_qualifiers["rmse"] = np.sqrt(np.mean(residuals**2))
+
         result = Result(
             fit_parameters=parameters,
-            gof_qualifiers={},
+            gof_qualifiers=gof_qualifiers,
             errors=errors,  # type: ignore
             fixed_parameters=self.parameters.fixed.guess,
             guess=self.parameters.guess,
