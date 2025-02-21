@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from functools import reduce
-from typing import Any, Iterable, Optional, OrderedDict, Union
+from typing import Any, OrderedDict, Union
 
 import numpy as np
 
-from smitfit.parameter import Parameter
 
-
+# todo this should accept iterable of arrays
+# then Root can also use it
 def flat_concat(data: dict[str, np.ndarray]) -> np.ndarray:
     return np.concatenate([arr.flatten() for arr in data.values()])
 
