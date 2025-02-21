@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
-from scipy.optimize import minimize
+from scipy.optimize import minimize, LbfgsInvHessProduct
 from smitfit.fitresult import FitResult
 from smitfit.loss import Loss, SELoss
 from smitfit.parameter import Parameters, pack, unpack
@@ -57,6 +57,8 @@ class Minimize:  # = currently only scipy minimize
                 s_squared = np.sum(residuals**2) / (N - P)
 
                 hess_inv = result.hess_inv  # or calculate one with numdiff
+                if isinstance(hess_inv, LbfgsInvHessProduct):
+                    hess_inv = hess_inv.todense()
                 cov_mat = s_squared * hess_inv * 2
                 std_error_arr = np.sqrt(np.diag(cov_mat))
                 std_error = unpack(std_error_arr, self.shapes)
