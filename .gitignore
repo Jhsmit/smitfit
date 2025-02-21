@@ -175,3 +175,6 @@ _version.py
 
 # wip files
 examples/wip/
+
+# notes to self
+notes.md
