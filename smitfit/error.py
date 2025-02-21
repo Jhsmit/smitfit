@@ -4,12 +4,12 @@ from typing import Callable
 
 import numpy as np
 
-from smitfit.fitresult import FitResult
+from smitfit.result import Result
 from smitfit.parameter import pack
 
 
 def bootstrap(
-    fit_func: Callable[[dict[str, np.ndarray]], FitResult],
+    fit_func: Callable[[dict[str, np.ndarray]], Result],
     err: float | dict[str, float],
     ydata: dict[str, np.ndarray],
     n_boot: int = 100,

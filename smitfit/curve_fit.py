@@ -1,4 +1,4 @@
-from smitfit.fitresult import FitResult
+from smitfit.result import Result
 from smitfit.function import Function
 from smitfit.parameter import Parameters, pack, unpack
 import numpy as np
@@ -17,7 +17,7 @@ class CurveFit:
         kwargs = unpack(args, self.parameters.free.shapes)
         return self.func(**unstacked_x, **kwargs, **self.parameters.fixed.guess)
 
-    def fit(self) -> FitResult:
+    def fit(self) -> Result:
         p0 = pack(self.parameters.free.guess.values())
         ydata = self.ydata[self.func.y.name]
         xdata = np.stack(list(self.xdata.values()))
@@ -28,7 +28,7 @@ class CurveFit:
         errors = unpack(np.sqrt(np.diag(pcov)), self.parameters.free.shapes)
         parameters = unpack(popt, self.parameters.free.shapes)
 
-        result = FitResult(
+        result = Result(
             fit_parameters=parameters,
             gof_qualifiers={},
             errors=errors,  # type: ignore

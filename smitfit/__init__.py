@@ -4,6 +4,7 @@ from smitfit.loss import SELoss
 from smitfit.minimize import Minimize
 from smitfit.model import Model
 from smitfit.parameter import Parameter, Parameters
+from smitfit.result import Result
 from smitfit.symbol import Symbols
 
 __all__ = [
@@ -12,7 +13,8 @@ __all__ = [
     "SELoss",
     "Minimize",
     "Model",
-    "Symbols",
     "Parameter",
     "Parameters",
+    "Result",
+    "Symbols",
 ]

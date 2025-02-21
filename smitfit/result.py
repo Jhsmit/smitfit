@@ -12,9 +12,9 @@ from smitfit.utils import clean_types, rgetattr
 
 
 @dataclass
-class FitResult:
+class Result:
     """
-    Fit result object.
+    Result object.
     """
 
     fit_parameters: dict[str, np.ndarray]

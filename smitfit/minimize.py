@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 from scipy.optimize import minimize, LbfgsInvHessProduct
-from smitfit.fitresult import FitResult
+from smitfit.result import Result
 from smitfit.loss import Loss, SELoss
 from smitfit.parameter import Parameters, pack, unpack
 from smitfit.utils import flat_concat
@@ -63,7 +63,7 @@ class Minimize:  # = currently only scipy minimize
                 std_error_arr = np.sqrt(np.diag(cov_mat))
                 std_error = unpack(std_error_arr, self.shapes)
 
-        return FitResult(
+        return Result(
             fit_parameters=fit_parameters,
             gof_qualifiers=gof_qualifiers,
             errors=std_error,
