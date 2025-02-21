@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from fnmatch import fnmatch
-from typing import Iterable
+from typing import Iterable, cast
 
 import sympy as sp
 from toposort import toposort
@@ -29,7 +29,7 @@ def parse_model_str(model: Iterable[str]) -> dict[sp.Symbol, sp.Expr]:
 class Model:
     def __init__(self, model: dict[sp.Symbol, sp.Expr | Expr] | Iterable[str] | str) -> None:
         if isinstance(model, dict):
-            self.model = model
+            self.model = cast(dict[sp.Symbol, sp.Expr | Expr], model)
         elif isinstance(model, str):
             self.model = parse_model_str([model])
         elif isinstance(model, Iterable):
