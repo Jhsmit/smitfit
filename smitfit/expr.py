@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from functools import cached_property
-from typing import Callable, Union
+from typing import Any, Callable, Union
 
 import numpy as np
 import sympy as sp
@@ -119,7 +119,7 @@ def str_to_expr(s: str) -> SympyExpr:
         raise ValueError(f"Invalid string expression: {s!r}")
 
 
-def as_expr(expr) -> Expr | dict[str, Expr]:
+def as_expr(expr: Any) -> Expr:
     if isinstance(expr, Expr):
         return expr
     elif isinstance(expr, str):
@@ -131,6 +131,6 @@ def as_expr(expr) -> Expr | dict[str, Expr]:
     if isinstance(expr, sp.Expr):
         return SympyExpr(expr)
     elif isinstance(expr, dict):
-        return {k: as_expr(v) for k, v in expr.items()}  # type: ignore
+        raise DeprecationWarning("To convert dicts, pass values to `as_expr` individually")
     else:
         raise TypeError(f"Invalid type: {type(expr)}")
