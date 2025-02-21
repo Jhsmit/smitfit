@@ -3,7 +3,6 @@ uses scipy.optimize.curve_fit
 """
 
 # %%
-import sympy as sp
 from smitfit import Function, SELoss, Model, CurveFit
 import ultraplot as uplt
 import numpy as np
