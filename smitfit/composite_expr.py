@@ -34,7 +34,8 @@ class MarkovIVP(CompositeExpr):
         domain: Optional[tuple[float, float]] = None,
         **ivp_kwargs,
     ):
-        expr = as_expr({"t": t, "trs_matrix": trs_matrix, "y0": y0})
+        d = {"t": t, "trs_matrix": trs_matrix, "y0": y0}
+        expr = {k: as_expr(v) for k, v in d.items()}
         super().__init__(expr)
 
         ivp_defaults = {"method": "Radau"}
