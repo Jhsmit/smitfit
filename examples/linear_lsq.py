@@ -42,6 +42,6 @@ np.polyfit(xdata["x"], ydata["y"], deg=1)
 
 fig, ax = uplt.subplots()
 ax.scatter(xdata["x"], ydata["y"])
-ax.plot(xdata["x"], model(**result.parameters, x=xdata)["y"], color="r")
+ax.plot(xdata["x"], model(**result.parameters, **xdata)["y"], color="r")
 
 # %%
