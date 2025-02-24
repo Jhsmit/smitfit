@@ -1,4 +1,5 @@
 from smitfit.curve_fit import CurveFit
+from smitfit.expr import CustomFunction
 from smitfit.function import Function
 from smitfit.loss import SELoss
 from smitfit.minimize import Minimize
@@ -9,6 +10,7 @@ from smitfit.symbol import Symbols
 
 __all__ = [
     "CurveFit",
+    "CustomFunction",
     "Function",
     "SELoss",
     "Minimize",
