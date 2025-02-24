@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from functools import cached_property
-from typing import Any, Callable, Union
+from typing import Any, Callable, Iterable, Union
 
 import numpy as np
 import sympy as sp
@@ -107,6 +107,15 @@ class SympyMatrixExpr(Expr):
             out[..., i, j] = self.lambdified[i, j](**ld_kwargs)
 
         return out
+
+
+class CustomFunction(Expr):
+    def __init__(self, func: Callable, symbols: Iterable[sp.Symbol]):
+        self.func = func
+        self.symbols = set(symbols)
+
+    def __call__(self, **kwargs):
+        return self.func(**kwargs)
 
 
 def str_to_expr(s: str) -> SympyExpr:
