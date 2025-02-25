@@ -4,13 +4,16 @@ from typing import Iterable
 
 import sympy as sp
 
-from smitfit.expr import as_expr
+from smitfit.expr import as_expr, Expr
 from smitfit.parameter import Parameter, Parameters
 from smitfit.typing import Numerical
 
 
+# TODO y is not used?
 class Function:
-    def __init__(self, func: sp.Expr | dict[sp.Symbol, sp.Expr] | str) -> None:
+    def __init__(
+        self, func: Expr | sp.Expr | dict[sp.Symbol, sp.Expr] | str, y=sp.Symbol("")
+    ) -> None:
         if isinstance(func, dict):
             assert len(func) == 1
             self.y = list(func.keys())[0]
@@ -18,7 +21,7 @@ class Function:
         elif isinstance(func, str):
             eq = sp.parse_expr(func, evaluate=False)
             if isinstance(eq, sp.Expr):
-                self.y = sp.Symbol("y")
+                self.y = y
                 self.expr = as_expr(eq)
             elif isinstance(eq, sp.Equality):
                 assert isinstance(eq.lhs, sp.Symbol)
@@ -27,8 +30,11 @@ class Function:
             else:
                 raise ValueError("Invalid string expression")
         elif isinstance(func, sp.Expr):
-            self.y = sp.Symbol("y")
+            self.y = y
             self.expr = as_expr(func)
+        elif isinstance(func, Expr):
+            self.y = y
+            self.expr = func
 
     def __call__(self, **kwargs):
         return self.expr(**kwargs)  # type: ignore

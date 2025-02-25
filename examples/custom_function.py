@@ -4,7 +4,7 @@ import numpy as np
 import ultraplot as uplt
 
 
-from smitfit.expr import Expr, CustomFunction
+from smitfit.expr import CustomFunction
 from smitfit.loss import SELoss
 from smitfit.minimize import Minimize
 from smitfit.model import Model

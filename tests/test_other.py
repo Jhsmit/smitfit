@@ -1,5 +1,8 @@
 from smitfit.model import Model
 import sympy as sp
+from smitfit.expr import Expr
+import numpy as np
+from smitfit.function import Function
 
 
 def test_model_from_str():
@@ -10,3 +13,10 @@ def test_model_from_str():
     lhs = model.model[sp.Symbol("y")]
     rhs = sp.Add(sp.Mul(sp.Symbol("a"), sp.Symbol("x")), sp.Symbol("b"))
     assert sp.Equality(lhs, rhs)
+
+
+def test_func_expr():
+    arr = np.random.rand(3, 4)
+    func = Function(Expr(arr))
+
+    assert np.allclose(func(), arr)
