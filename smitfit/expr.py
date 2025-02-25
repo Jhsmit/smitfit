@@ -34,6 +34,11 @@ class Expr:
     def __getitem__(self, item):
         return GetItem(self, item)
 
+    def __add__(self, other):
+        from smitfit.operator import Add
+
+        return Add(self, other)
+
     def __call__(self, **kwargs):
         return self._expr
 
