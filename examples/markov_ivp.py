@@ -19,6 +19,8 @@ from smitfit.model import Model
 from smitfit.parameter import Parameters
 from smitfit.symbol import symbol_matrix
 from sympy import Symbol
+from cycler import cycler
+
 
 # %%
 np.random.seed(43)
@@ -75,7 +77,7 @@ for k, v in result.parameters.items():
 
 # %%
 color = ["#7FACFA", "#FA654D", "#8CAD36"]
-cycle = uplt.Cycle(color=color)
+cycle = cycler(color=["#7FACFA", "#FA654D", "#8CAD36"])
 
 eval_data = {"t": np.linspace(0, 11, 1000)}
 y_eval = model(**result.parameters, **eval_data)["y"]
