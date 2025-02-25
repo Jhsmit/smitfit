@@ -89,12 +89,16 @@ class Parameters:
 
     def fix(self, *names: str) -> Parameters:
         """Fix specified parameters"""
+        if not names:
+            names = tuple(self._parameters.keys())
         for name in names:
             self._parameters[name].fix()
         return self
 
     def unfix(self, *names: str) -> Parameters:
         """Unfix specified parameters"""
+        if not names:
+            names = tuple(self._parameters.keys())
         for name in names:
             self._parameters[name].unfix()
         return self
