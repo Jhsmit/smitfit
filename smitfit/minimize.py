@@ -13,11 +13,11 @@ class Minimize:  # = currently only scipy minimize
         self.loss = loss
         self.parameters = parameters
         self.xdata = xdata
-        self.shapes = {p.name: p.shape for p in self.parameters}
+        self.fit_parameter_shapes = {p.name: p.shape for p in self.parameters.free}
 
     def func(self, x: np.ndarray):
-        parameters = unpack(x, self.shapes)
-        return self.loss(**parameters, **self.xdata)
+        parameters = unpack(x, self.fit_parameter_shapes)
+        return self.loss(**parameters, **self.xdata, **self.parameters.fixed.guess)
 
     def get_bounds(self) -> list[tuple[float | None, float | None]] | None:
         bounds = []
@@ -33,7 +33,7 @@ class Minimize:  # = currently only scipy minimize
     def fit(self):
         x = pack(self.parameters.free.guess.values())
         result = minimize(self.func, x, bounds=self.get_bounds())
-        fit_parameters = unpack(result.x, self.shapes)
+        fit_parameters = unpack(result.x, self.fit_parameter_shapes)
 
         gof_qualifiers = {
             "loss": result["fun"],
@@ -42,7 +42,7 @@ class Minimize:  # = currently only scipy minimize
         std_error = {}
         if hasattr(self.loss, "y_data"):
             y_data = self.loss.y_data
-            ans = self.loss.model(**self.xdata, **fit_parameters)
+            ans = self.loss.model(**self.xdata, **fit_parameters, **self.parameters.fixed.guess)
             f = flat_concat({k: ans[k] for k in y_data})
             y = flat_concat(y_data)
 
@@ -61,7 +61,7 @@ class Minimize:  # = currently only scipy minimize
                     hess_inv = hess_inv.todense()
                 cov_mat = s_squared * hess_inv * 2
                 std_error_arr = np.sqrt(np.diag(cov_mat))
-                std_error = unpack(std_error_arr, self.shapes)
+                std_error = unpack(std_error_arr, self.fit_parameter_shapes)
 
         return Result(
             fit_parameters=fit_parameters,
