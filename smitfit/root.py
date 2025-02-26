@@ -4,8 +4,6 @@ import numpy as np
 from smitfit.parameter import pack, unpack
 from smitfit.expr import as_expr
 
-import line_profiler
-
 
 class Root:
     def __init__(self, eqns: list) -> None:
@@ -34,7 +32,6 @@ class Root:
         def unpack_args(args):
             return {n: arg for n, arg in zip(self.params, args)}
 
-        @line_profiler.profile
         def callable(x0, *args):
             ans = [e(**unpack_x0(x0), **unpack_args(args)) for e in self.expr]
             return np.concatenate([arr.flatten() for arr in ans])
