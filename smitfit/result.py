@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 import os
-import pickle
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Optional, Union
+from typing import Any, Optional, Union
 
 import numpy as np
-from smitfit.utils import clean_types, rgetattr
+
+from smitfit.utils import clean_types
 
 
 @dataclass
@@ -28,7 +28,7 @@ class Result:
     fixed_parameters: dict[str, float | np.ndarray] = field(default_factory=dict)  # Numerical dtype
     """Values of the model's fixed parameters"""
 
-    guess: Optional[dict] = None
+    guess: dict = field(default_factory=dict)
     """Initial guesses"""
 
     metadata: dict = field(default_factory=dict)
