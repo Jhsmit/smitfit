@@ -19,7 +19,6 @@ from smitfit.model import Model
 from smitfit.parameter import Parameters
 from smitfit.symbol import symbol_matrix
 from sympy import Symbol
-from cycler import cycler
 
 
 # %%
@@ -47,8 +46,8 @@ states = extract_states(connectivity)
 y0 = symbol_matrix(name="y0", shape=(3, 1), suffix=states)
 model = Model({Symbol("y"): MarkovIVP(Symbol("t"), m, y0)})
 
-rate_params = Parameters.from_symbols(m.free_symbols)
-y0_params = Parameters.from_symbols(y0.free_symbols)
+rate_params = model.define_parameters("k*")
+y0_params = model.define_parameters("y0*")
 
 parameters = rate_params + y0_params
 # %%
@@ -77,7 +76,7 @@ for k, v in result.parameters.items():
 
 # %%
 color = ["#7FACFA", "#FA654D", "#8CAD36"]
-cycle = cycler(color=["#7FACFA", "#FA654D", "#8CAD36"])
+cycle = uplt.Cycle(color)
 
 eval_data = {"t": np.linspace(0, 11, 1000)}
 y_eval = model(**result.parameters, **eval_data)["y"]
