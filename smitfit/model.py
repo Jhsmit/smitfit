@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import re
 from fnmatch import fnmatch
-from typing import Iterable, cast
+from typing import Iterable, cast, Dict, Union, Mapping
 
 import sympy as sp
 from toposort import toposort
 
-from smitfit.expr import Expr, as_expr
+from smitfit.expr import Expr, as_expr, _parse_subs_args
 from smitfit.parameter import Parameter, Parameters
 from smitfit.typing import Numerical
 
@@ -83,3 +83,33 @@ class Model:
             raise TypeError("Invalid type")
 
         return Parameters(params)
+
+    def subs(self, *args, **kwargs) -> Model:
+        """
+        Substitute symbols in the model with other symbols or expressions.
+
+        Works similar to sympy's subs() method. Returns a new Model instance.
+
+        Args:
+            *args: Can be a dict, list, or tuple of (old, new) pairs
+            **kwargs: Can be symbol names and their replacements
+
+        Returns:
+            A new Model with substituted expressions
+        """
+        # Get all relevant symbols from the model
+        all_symbols = self.x_symbols.union(self.y_symbols)
+
+        # Parse substitution arguments
+        subs_dict = _parse_subs_args(*args, symbols=all_symbols, **kwargs)
+        # Create new model with substitutions
+        new_model = {}
+        for symbol, expr in self.model.items():
+            if isinstance(expr, (sp.Expr, sp.MatrixBase, Expr)):
+                new_expr = expr.subs(subs_dict)
+            else:
+                new_expr = expr
+
+            new_model[symbol] = new_expr
+
+        return Model(new_model)

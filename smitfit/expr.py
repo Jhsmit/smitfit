@@ -2,11 +2,53 @@
 from __future__ import annotations
 
 from functools import cached_property
-from typing import Any, Callable, Iterable, Union
+from typing import Any, Callable, Iterable, Union, Mapping, Dict, Set, Tuple, Optional
 
 import numpy as np
 import sympy as sp
 from smitfit.typing import Numerical
+
+
+def _parse_subs_args(
+    *args, symbols: Optional[Set[sp.Symbol]] = None, **kwargs
+) -> Dict[sp.Symbol, Any]:
+    """
+    Helper function to parse substitution arguments in a consistent way.
+
+    Args:
+        *args: Either a dict or a sequence of (old, new) pairs, or a single (old, new) pair
+        symbols: Optional set of symbols to match names against for keyword arguments
+        **kwargs: Symbol names and their replacements
+
+    Returns:
+        Dict mapping symbols to their replacements
+    """
+    subs_dict = {}
+
+    # Handle dict or sequence of (old, new) pairs in args
+    if len(args) == 1:
+        arg = args[0]
+        if isinstance(arg, Mapping):
+            subs_dict.update(arg)
+        elif isinstance(arg, (list, tuple)):
+            for old, new in arg:
+                subs_dict[old] = new
+    elif len(args) == 2:  # Handle direct (old, new) pair
+        subs_dict[args[0]] = args[1]
+
+    # Handle keyword arguments
+    for name, replacement in kwargs.items():
+        if symbols:
+            # Try to find a symbol with this name
+            matching_symbols = [s for s in symbols if s.name == name]
+            if matching_symbols:
+                subs_dict[matching_symbols[0]] = replacement
+                continue
+
+        # Create a new symbol if none exists (consistent with sympy behavior)
+        subs_dict[sp.Symbol(name)] = replacement
+
+    return subs_dict
 
 
 # %%
@@ -42,6 +84,21 @@ class Expr:
     def __call__(self, **kwargs):
         return self._expr
 
+    def subs(self, *args, **kwargs) -> Expr:
+        """
+        Base substitution method. By default, returns a copy of self since
+        generic expressions don't have symbols to substitute.
+
+        Args:
+            *args: Either a dict or a sequence of (old, new) pairs, or a single (old, new) pair
+            **kwargs: Symbol names and their replacements
+
+        Returns:
+            A new expression with substitutions applied
+        """
+        # Default implementation just returns a copy
+        return type(self)(self._expr)
+
 
 class GetItem(Expr):
     def __init__(self, expr: Expr, item: Union[tuple, slice, int]):
@@ -60,6 +117,12 @@ class GetItem(Expr):
     def __repr__(self) -> str:
         return f"{self.expr.__repr__()}[{self.item!r}]"
 
+    def subs(self, *args, **kwargs) -> Expr:
+        """
+        Applies substitutions to the underlying expression and preserves the getitem operation.
+        """
+        return GetItem(self._expr.subs(*args, **kwargs), self.item)
+
 
 class SympyExpr(Expr):
     @cached_property
@@ -77,6 +140,22 @@ class SympyExpr(Expr):
 
     def __call__(self, **kwargs):
         return self.lambdified(**self.filter_kwargs(**kwargs))
+
+    def subs(self, *args, **kwargs) -> SympyExpr:
+        """
+        Substitute symbols in the expression with other symbols or expressions.
+
+        Works similar to sympy's subs() method.
+
+        Args:
+            *args: Can be a dict, list, or tuple of (old, new) pairs, or a single (old, new) pair
+            **kwargs: Can be symbol names and their replacements
+
+        Returns:
+            A new SympyExpr with substituted expressions
+        """
+        subs_dict = _parse_subs_args(*args, symbols=self.symbols, **kwargs)
+        return SympyExpr(self._expr.subs(subs_dict))
 
 
 class SympyMatrixExpr(Expr):
@@ -113,6 +192,22 @@ class SympyMatrixExpr(Expr):
 
         return out
 
+    def subs(self, *args, **kwargs) -> SympyMatrixExpr:
+        """
+        Substitute symbols in the matrix expression with other symbols or expressions.
+
+        Works similar to sympy's subs() method.
+
+        Args:
+            *args: Can be a dict, list, or tuple of (old, new) pairs, or a single (old, new) pair
+            **kwargs: Can be symbol names and their replacements
+
+        Returns:
+            A new SympyMatrixExpr with substituted expressions
+        """
+        subs_dict = _parse_subs_args(*args, symbols=self.symbols, **kwargs)
+        return SympyMatrixExpr(self._expr.subs(subs_dict))
+
 
 class CustomFunction(Expr):
     def __init__(self, func: Callable, symbols: Iterable[sp.Symbol]):
@@ -121,6 +216,16 @@ class CustomFunction(Expr):
 
     def __call__(self, **kwargs):
         return self.func(**kwargs)
+
+    def subs(self, *args, **kwargs) -> CustomFunction:
+        """
+        Substitute symbols in the custom function with other symbols or expressions.
+        Has no effect !!
+
+        Returns:
+            A new CustomFunction with substituted expressions
+        """
+        return CustomFunction(self.func, self.symbols)
 
 
 def str_to_expr(s: str) -> SympyExpr:

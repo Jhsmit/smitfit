@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from functools import cached_property
-from typing import Optional
+from typing import Optional, Dict, Any
 
 import numpy as np
 import sympy as sp
 from scipy.integrate import solve_ivp
-from smitfit.expr import Expr, as_expr
+from smitfit.expr import Expr, _parse_subs_args, as_expr
 
 
 class CompositeExpr(Expr):
@@ -16,6 +16,34 @@ class CompositeExpr(Expr):
 
     def __call__(self, **kwargs):
         return {k: v(**kwargs) for k, v in self.expr.items()}
+
+    def subs(self, *args, **kwargs) -> CompositeExpr:
+        """
+        Substitute symbols in all component expressions with other symbols or expressions.
+
+        Args:
+            *args: Can be a dict, list, or tuple of (old, new) pairs, or a single (old, new) pair
+            **kwargs: Can be symbol names and their replacements
+
+        Returns:
+            A new CompositeExpr with substituted expressions
+        """
+        subs_dict = _parse_subs_args(*args, symbols=self.symbols, **kwargs)
+
+        # Create new substituted expressions
+        new_expr = {k: v.subs(subs_dict) for k, v in self.expr.items()}
+
+        # Create a new instance with the same class as self
+        # This preserves the specific CompositeExpr subclass type
+        result = type(self).__new__(type(self))
+        result._expr = new_expr
+
+        # Copy any other important attributes
+        for attr_name in self.__dict__:
+            if attr_name != "_expr" and attr_name != "symbols":
+                setattr(result, attr_name, getattr(self, attr_name))
+
+        return result
 
 
 class MarkovIVP(CompositeExpr):
