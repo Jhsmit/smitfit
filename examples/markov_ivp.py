@@ -16,7 +16,6 @@ from smitfit.loss import MSELoss
 from smitfit.markov import extract_states, generate_transition_matrix
 from smitfit.minimize import Minimize
 from smitfit.model import Model
-from smitfit.parameter import Parameters
 from smitfit.symbol import symbol_matrix
 from sympy import Symbol
 
@@ -86,3 +85,5 @@ ax.scatter(xdata["t"], ydata["y"].T, cycle=cycle)
 ax.line(eval_data["t"], y_eval.T, cycle=cycle)
 ax.format(xlabel="Time", ylabel="Population Fraction")
 uplt.show()
+
+# %%
