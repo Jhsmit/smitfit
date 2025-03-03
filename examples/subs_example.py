@@ -8,7 +8,6 @@ some parameters are defined in terms of other parameters.
 # %%
 import numpy as np
 import sympy as sp
-import matplotlib.pyplot as plt
 
 from smitfit.model import Model
 from smitfit.minimize import Minimize
@@ -51,7 +50,7 @@ constrained_model = base_model.subs(b=sp.Symbol("a") / 10)  # type: ignore
 
 # Define the model's parameters - only have 'a' and 'c' now
 constrained_params = constrained_model.define_parameters("a, c")
-print("\nConstrained model parameters:", [p.symbol.name for p in constrained_params])
+print("Constrained model parameters:", [p.symbol.name for p in constrained_params])
 
 
 # %%
