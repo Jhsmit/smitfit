@@ -80,6 +80,10 @@ class Parameters:
         return cls(p_list)
 
     @property
+    def symbols(self) -> set[sp.Symbol]:
+        return {p.symbol for p in self}
+
+    @property
     def guess(self) -> dict[str, Numerical]:  # other types?
         return {p.name: np.asarray(p.guess) for p in self}
 
