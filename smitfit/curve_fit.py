@@ -1,14 +1,12 @@
 from smitfit.result import Result
 from smitfit.function import Function
-from smitfit.parameter import Parameters, pack, unpack
+from smitfit.parameter import Parameters, pack, unpack, scipy_bounds
 import numpy as np
 from scipy.optimize import curve_fit
 
 
 class CurveFit:
-    def __init__(
-        self, func: Function, xdata: dict, ydata: dict, parameters: Parameters
-    ):
+    def __init__(self, func: Function, xdata: dict, ydata: dict, parameters: Parameters):
         self.func = func
         self.xdata = xdata
         self.ydata = ydata
@@ -25,7 +23,7 @@ class CurveFit:
         xdata = np.stack(list(self.xdata.values()))
 
         popt, pcov, infodict, mesg, ier = curve_fit(
-            self.f, xdata, ydata, p0=p0, full_output=True
+            self.f, xdata, ydata, p0=p0, bounds=scipy_bounds(self.parameters.free), full_output=True
         )
         base_result = dict(popt=popt, pcov=pcov, infodict=infodict, mesg=mesg, ier=ier)
 
@@ -36,9 +34,7 @@ class CurveFit:
         y = self.ydata[self.func.y.name]
 
         gof_qualifiers = {}
-        gof_qualifiers["r_squared"] = 1 - np.sum((y - f) ** 2) / np.sum(
-            (y - np.mean(y)) ** 2
-        )
+        gof_qualifiers["r_squared"] = 1 - np.sum((y - f) ** 2) / np.sum((y - np.mean(y)) ** 2)
         residuals = infodict["fvec"]
         gof_qualifiers["loss"] = np.sum(residuals**2)
         gof_qualifiers["rmse"] = np.sqrt(np.mean(residuals**2))
@@ -52,3 +48,14 @@ class CurveFit:
             base_result=base_result,
         )
         return result
+
+    def get_bounds(self) -> list[tuple[float | None, float | None]] | None:
+        bounds = []
+        for p in self.parameters.free:
+            size = np.prod(p.shape, dtype=int)
+            bounds += [p.bounds] * size
+
+        if all((None, None) == b for b in bounds):
+            return None
+        else:
+            return bounds

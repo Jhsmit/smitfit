@@ -31,8 +31,35 @@ parameters = model.define_parameters("a b")
 # %%
 loss = SELoss(model, ydata)
 minimize = Minimize(loss, parameters, xdata)
+parameters["a"].set_bounds(0.3, None)
+
 result = minimize.fit()
 result.parameters
+
+# %%
+
+parameters["a"].set_bounds(0.3, None)
+minimize = Minimize(loss, parameters, xdata)
+self = minimize
+
+lb, ub = [], []
+for p in self.parameters.free:
+    size = np.prod(p.shape, dtype=int)
+    lb += [p.bounds[0]] * size
+    ub += [p.bounds[1]] * size
+
+if all(elem is None for elem in lb + ub):
+    print("all none")
+else:
+    # replace none in lb with -np.inf
+    lb = [-np.inf if elem is None else elem for elem in lb]
+    ub = [np.inf if elem is None else elem for elem in ub]
+
+lb, ub
+from scipy.optimize import Bounds
+
+bounds = Bounds(lb, ub)  # type: ignore
+bounds
 # %%
 # %%
 # compare to numpy polyfit

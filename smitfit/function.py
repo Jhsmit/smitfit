@@ -12,7 +12,7 @@ from smitfit.typing import Numerical
 # TODO y is not used?
 class Function:
     def __init__(
-        self, func: Expr | sp.Expr | dict[sp.Symbol, sp.Expr] | str, y=sp.Symbol("")
+        self, func: Expr | sp.Expr | dict[sp.Symbol, sp.Expr] | str, y=sp.Symbol("y")
     ) -> None:
         if isinstance(func, dict):
             assert len(func) == 1

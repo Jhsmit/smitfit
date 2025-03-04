@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import numpy as np
-from scipy.optimize import minimize, LbfgsInvHessProduct
-from smitfit.result import Result
+from scipy.optimize import LbfgsInvHessProduct, minimize
+
 from smitfit.loss import Loss, SELoss
-from smitfit.parameter import Parameters, pack, unpack
+from smitfit.parameter import Parameters, pack, scipy_bounds, unpack
+from smitfit.result import Result
 from smitfit.utils import flat_concat
 
 
@@ -19,20 +20,9 @@ class Minimize:  # = currently only scipy minimize
         parameters = unpack(x, self.fit_parameter_shapes)
         return self.loss(**parameters, **self.xdata, **self.parameters.fixed.guess)
 
-    def get_bounds(self) -> list[tuple[float | None, float | None]] | None:
-        bounds = []
-        for p in self.parameters.free:
-            size = np.prod(p.shape, dtype=int)
-            bounds += [p.bounds] * size
-
-        if all((None, None) == b for b in bounds):
-            return None
-        else:
-            return bounds
-
     def fit(self):
         x = pack(self.parameters.free.guess.values())
-        result = minimize(self.func, x, bounds=self.get_bounds())
+        result = minimize(self.func, x, bounds=scipy_bounds(self.parameters.free))
         fit_parameters = unpack(result.x, self.fit_parameter_shapes)
 
         gof_qualifiers = {

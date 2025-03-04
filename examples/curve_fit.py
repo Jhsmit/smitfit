@@ -23,9 +23,9 @@ noise = np.random.normal(0, scale=np.abs(y_arr / 10.0 + 0.2))
 y_arr += noise
 xdata, ydata = {"x1": x1_arr, "x2": x2_arr}, {"y": y_arr}
 
-
 f = Function("a*x1 + b + c*sin(x2)")
 
+# %%
 parameters = f.define_parameters("a b c")
 curve_fit = CurveFit(f, xdata, ydata, parameters)
 result = curve_fit.fit()

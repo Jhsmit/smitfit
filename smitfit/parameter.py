@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Iterable, Optional
+from scipy.optimize import Bounds
 
 import numpy as np
 import numpy.typing as npt
@@ -158,3 +159,18 @@ def pack(
     """Pack a dictionary of parameter_name together as array"""
 
     return np.concatenate(tuple(np.array(param_value).ravel() for param_value in parameter_values))
+
+
+def scipy_bounds(parameters: Parameters) -> Optional[Bounds]:
+    lb, ub = [], []
+    for p in parameters:
+        size = np.prod(p.shape, dtype=int)
+        lb += [p.bounds[0]] * size
+        ub += [p.bounds[1]] * size
+
+    if all(elem is None for elem in lb + ub):
+        return None
+    else:
+        lb = [-np.inf if elem is None else elem for elem in lb]
+        ub = [np.inf if elem is None else elem for elem in ub]
+        return Bounds(lb, ub)  # type: ignore
