@@ -27,7 +27,12 @@ f = Function("a*x1 + b + c*sin(x2)")
 
 # %%
 parameters = f.define_parameters("a b c")
-curve_fit = CurveFit(f, xdata, ydata, parameters)
+curve_fit = CurveFit(
+    f,
+    parameters,
+    xdata,
+    ydata,
+)
 result = curve_fit.fit()
 result.parameters
 

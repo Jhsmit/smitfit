@@ -1,19 +1,20 @@
-import numpy as np
-from scipy.optimize import minimize, LbfgsInvHessProduct
-from smitfit.result import Result
-from smitfit.loss import Loss, SELoss
-from smitfit.parameter import Parameters, pack, unpack
-from smitfit.utils import flat_concat
 import lmfit as lm
+import numpy as np
+
+from smitfit.loss import SELoss
+from smitfit.model import Model
+from smitfit.parameter import Parameters
+from smitfit.result import Result
+from smitfit.utils import flat_concat
 
 
-class Minimize:  # = currently only scipy minimize
+class Minimize:
     def __init__(
         self,
-        model,
+        model: Model,
+        parameters: Parameters,
         xdata: dict[str, np.ndarray],
         ydata: dict[str, np.ndarray],
-        parameters: Parameters,
     ):
         self.loss = SELoss(model, ydata)
         self.parameters = parameters

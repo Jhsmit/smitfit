@@ -2,9 +2,9 @@
 import numpy as np
 import ultraplot as uplt
 
-from smitfit.minimize import Minimize
 from smitfit.model import Model
 from smitfit.symbol import Symbols
+from smitfit.lmfit import Minimize
 
 # %%
 
@@ -28,11 +28,7 @@ parameters = model.define_parameters("a b")
 
 # %%
 
-from smitfit.lmfit import Minimize
-
-result = Minimize(
-    model, xdata, ydata, parameters
-).fit()  # TODO change to model, parameters, xdata, ydata ?
+result = Minimize(model, parameters, xdata, ydata).fit()
 
 result.parameters, result.errors
 

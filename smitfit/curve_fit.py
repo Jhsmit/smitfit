@@ -6,11 +6,11 @@ from scipy.optimize import curve_fit
 
 
 class CurveFit:
-    def __init__(self, func: Function, xdata: dict, ydata: dict, parameters: Parameters):
+    def __init__(self, func: Function, parameters: Parameters, xdata: dict, ydata: dict):
         self.func = func
+        self.parameters = parameters
         self.xdata = xdata
         self.ydata = ydata
-        self.parameters = parameters
 
     def f(self, xdata: np.ndarray, *args):
         unstacked_x = {k: v for k, v in zip(self.xdata, np.atleast_2d(xdata))}
