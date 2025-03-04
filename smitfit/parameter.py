@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Iterable, Optional
 from scipy.optimize import Bounds
 
@@ -135,6 +135,9 @@ class Parameters:
     def to_list(self) -> list[Parameter]:
         """Convert to parameter list"""
         return list(self._parameters.values())
+
+    def copy(self) -> Parameters:
+        return Parameters([replace(p) for p in self])
 
     def __repr__(self) -> str:
         return f"Parameters({list(self._parameters.values())})"
