@@ -39,7 +39,10 @@ class Minimize:
 
         # redchi, aic, bic
         gof_qualifiers = {"chisqr": result.chisqr}
-        errors = {k.name: result.uvars[k.name].std_dev for k in self.parameters.free}
+        if result.errorbars:
+            errors = {k.name: result.uvars[k.name].std_dev for k in self.parameters.free}
+        else:
+            errors = {}
 
         # fixed_parameters = {k.name: result.params[k.name].value for k in self.parameters.fixed}
         # check identical with self.parameters.fixed.guess
