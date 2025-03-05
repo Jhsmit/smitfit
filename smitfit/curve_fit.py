@@ -22,8 +22,9 @@ class CurveFit:
         ydata = self.ydata[self.func.y.name]
         xdata = np.stack(list(self.xdata.values()))
 
+        bounds = scipy_bounds(self.parameters.free) or (-np.inf, np.inf)
         popt, pcov, infodict, mesg, ier = curve_fit(
-            self.f, xdata, ydata, p0=p0, bounds=scipy_bounds(self.parameters.free), full_output=True
+            self.f, xdata, ydata, p0=p0, bounds=bounds, full_output=True
         )
         base_result = dict(popt=popt, pcov=pcov, infodict=infodict, mesg=mesg, ier=ier)
 
