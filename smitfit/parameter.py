@@ -46,6 +46,16 @@ class Parameter:
         self.bounds = (lower, upper)
         return self
 
+    def set_positive(self) -> Parameter:
+        """Set positive bounds"""
+        self.bounds = (0, None)
+        return self
+
+    def set_negative(self) -> Parameter:
+        """Set negative bounds"""
+        self.bounds = (None, 0)
+        return self
+
     def set_guess(self, value: Numerical) -> Parameter:
         """Set initial guess value"""
         self.guess = value
@@ -114,6 +124,22 @@ class Parameters:
         """Set bounds for multiple parameters at once"""
         for name, (lower, upper) in bounds_dict.items():
             self._parameters[name].set_bounds(lower, upper)
+        return self
+
+    def set_positive(self, *names: str) -> Parameters:
+        """Set positive bounds for specified parameters"""
+        if not names:
+            names = tuple(self._parameters.keys())
+        for name in names:
+            self._parameters[name].set_bounds(0, None)
+        return self
+
+    def set_negative(self, *names: str) -> Parameters:
+        """Set negative bounds for specified parameters"""
+        if not names:
+            names = tuple(self._parameters.keys())
+        for name in names:
+            self._parameters[name].set_bounds(None, 0)
         return self
 
     def set_guesses(self, guess_dict: dict[str, Numerical]) -> Parameters:
