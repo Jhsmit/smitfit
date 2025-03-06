@@ -17,7 +17,8 @@ class Parameter:
 
     symbol: sp.Symbol
     guess: Numerical = 1.0
-    bounds: tuple[Optional[Numerical], Optional[Numerical]] = (None, None)
+    lower_bound: Optional[Numerical] = None
+    upper_bound: Optional[Numerical] = None
     fixed: bool = False  # TODO fixed per array element?
 
     @property
@@ -28,6 +29,10 @@ class Parameter:
     def shape(self) -> tuple[int, ...]:
         shape = getattr(self.guess, "shape", tuple())
         return shape
+
+    @property
+    def bounds(self) -> tuple[Optional[Numerical], Optional[Numerical]]:
+        return self.lower_bound, self.upper_bound
 
     def fix(self) -> Parameter:
         """Fix the parameter at its current guess value"""
@@ -40,20 +45,21 @@ class Parameter:
         return self
 
     def set_bounds(
-        self, lower: Optional[Numerical] = None, upper: Optional[Numerical] = None
+        self, lower_bound: Optional[Numerical] = None, upper_bound: Optional[Numerical] = None
     ) -> Parameter:
         """Set parameter bounds"""
-        self.bounds = (lower, upper)
+        self.lower_bound = lower_bound
+        self.upper_bound = upper_bound
         return self
 
     def set_positive(self) -> Parameter:
         """Set positive bounds"""
-        self.bounds = (0, None)
+        self.lower_bound = 0
         return self
 
     def set_negative(self) -> Parameter:
         """Set negative bounds"""
-        self.bounds = (None, 0)
+        self.upper_bound = 0
         return self
 
     def set_guess(self, value: Numerical) -> Parameter:
@@ -194,8 +200,8 @@ def scipy_bounds(parameters: Parameters) -> Optional[Bounds]:
     lb, ub = [], []
     for p in parameters:
         size = np.prod(p.shape, dtype=int)
-        lb += [p.bounds[0]] * size
-        ub += [p.bounds[1]] * size
+        lb += [p.lower_bound] * size
+        ub += [p.upper_bound] * size
 
     if all(elem is None for elem in lb + ub):
         return None
