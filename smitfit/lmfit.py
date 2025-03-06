@@ -37,7 +37,7 @@ class Minimize:
         result = lm.minimize(residual, lm_params)
         fit_parameters = {k.name: result.params[k.name].value for k in self.parameters.free}
 
-        # redchi, aic, bic
+        # TODO redchi, aic, bic, r_squared
         gof_qualifiers = {"chisqr": result.chisqr}
         if result.errorbars:
             errors = {k.name: result.uvars[k.name].std_dev for k in self.parameters.free}
