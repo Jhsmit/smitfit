@@ -5,7 +5,7 @@ from smitfit.parameter import Parameter, Parameters, unpack, pack
 
 def test_parameter_initialization():
     symbol = sp.Symbol("a")
-    param = Parameter(symbol, guess=2.0, bounds=(0, 10), fixed=True)
+    param = Parameter(symbol, guess=2.0, lower_bound=0, upper_bound=10, fixed=True)
 
     assert param.symbol == symbol
     assert param.guess == 2.0

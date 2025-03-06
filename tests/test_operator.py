@@ -19,7 +19,7 @@ def test_add():
 
     arr = np.random.rand(10)
     add_expr = Expr(arr) + SympyExpr(sp.Symbol("a"))
-    assert add_expr(a=3) == arr + 3
+    assert np.allclose(add_expr(a=3), arr + 3)
 
 
 def test_mul():

@@ -243,7 +243,7 @@ def as_expr(expr: Any) -> Expr:
         return expr
     elif isinstance(expr, str):
         return str_to_expr(expr)
-    elif isinstance(expr, (float, np.ndarray)):  # torch tensor, ...
+    elif isinstance(expr, (float, int, np.ndarray)):  # torch tensor, ...
         return Expr(expr)
     elif isinstance(expr, sp.MatrixBase):
         return SympyMatrixExpr(expr)
