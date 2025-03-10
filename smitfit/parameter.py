@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, replace
+from dataclasses import asdict, dataclass, replace
 from typing import Iterable, Optional
 from scipy.optimize import Bounds
 
@@ -167,6 +167,28 @@ class Parameters:
     def to_list(self) -> list[Parameter]:
         """Convert to parameter list"""
         return list(self._parameters.values())
+
+    def to_dataframe(self):
+        """Convert parameters to a DataFrame.
+
+        Returns a DataFrame from polars or pandas, depending on which is installed.
+        Prioritizes polars over pandas.
+        """
+        data = [asdict(p) for p in self]
+
+        try:
+            import polars as pl
+
+            return pl.DataFrame(data)
+        except ImportError:
+            try:
+                import pandas as pd
+
+                return pd.DataFrame(data)
+            except ImportError:
+                raise ImportError(
+                    "Neither polars nor pandas is installed. Please install one of them."
+                )
 
     def copy(self) -> Parameters:
         return Parameters([replace(p) for p in self])
