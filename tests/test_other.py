@@ -15,6 +15,20 @@ def test_model_from_str():
     assert sp.Equality(lhs, rhs)
 
 
+# move to model tests
+def test_model_parameters():
+    model = Model("y == a * x + b")
+    params = model.define_parameters()
+    assert len(params) == 3
+    assert {p.name for p in params} == {"a", "b", "x"}
+
+    params = model.define_parameters({"a": 3, "b": 4, "c": 5})
+    assert len(params) == 2
+    assert {p.name for p in params} == {"a", "b"}
+    assert params["a"].guess == 3
+    assert params["b"].guess == 4
+
+
 def test_func_expr():
     arr = np.random.rand(3, 4)
     func = Function(Expr(arr))

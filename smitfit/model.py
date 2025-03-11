@@ -61,24 +61,24 @@ class Model:
     def define_parameters(
         self, parameters: dict[str, Numerical] | Iterable[str] | str = "*"
     ) -> Parameters:
-        symbols = {s.name: s for s in self.x_symbols}
+        symbol_names = {s.name for s in self.x_symbols}
         if parameters == "*":
-            params = [Parameter(symbol) for symbol in self.x_symbols]
+            params = [Parameter(symbol.name) for symbol in self.x_symbols]
         elif isinstance(parameters, str):
             if "*" in parameters:  # fnmatch
                 params = [
-                    Parameter(symbol)
+                    Parameter(symbol.name)
                     for symbol in self.x_symbols
                     if fnmatch(symbol.name, parameters)
                 ]
             else:
                 # split by comma, whiteplace, etc
-                params = [Parameter(symbols[k.strip()]) for k in re.split(r"[,;\s]+", parameters)]
+                params = [Parameter(k.strip()) for k in re.split(r"[,;\s]+", parameters)]
 
         elif isinstance(parameters, dict):
-            params = [Parameter(symbols[k], guess=v) for k, v in parameters.items()]
+            params = [Parameter(k, guess=v) for k, v in parameters.items() if k in symbol_names]
         elif isinstance(parameters, Iterable):
-            params = [Parameter(symbols[k]) for k in parameters]
+            params = [Parameter(k) for k in parameters if k in symbol_names]
         else:
             raise TypeError("Invalid type")
 

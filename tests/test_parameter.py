@@ -5,7 +5,7 @@ from smitfit.parameter import Parameter, Parameters, unpack, pack
 
 def test_parameter_initialization():
     symbol = sp.Symbol("a")
-    param = Parameter(symbol, guess=2.0, lower_bound=0, upper_bound=10, fixed=True)
+    param = Parameter(symbol.name, guess=2.0, lower_bound=0, upper_bound=10, fixed=True)
 
     assert param.symbol == symbol
     assert param.guess == 2.0
@@ -15,7 +15,7 @@ def test_parameter_initialization():
 
 def test_parameter_fix_unfix():
     symbol = sp.Symbol("a")
-    param = Parameter(symbol)
+    param = Parameter(symbol.name)
 
     param.fix()
     assert param.fixed is True
@@ -26,7 +26,7 @@ def test_parameter_fix_unfix():
 
 def test_parameter_set_bounds():
     symbol = sp.Symbol("a")
-    param = Parameter(symbol)
+    param = Parameter(symbol.name)
 
     param.set_bounds(0, 10)
     assert param.bounds == (0, 10)
@@ -34,24 +34,26 @@ def test_parameter_set_bounds():
 
 def test_parameter_set_guess():
     symbol = sp.Symbol("a")
-    param = Parameter(symbol)
+    param = Parameter(symbol.name)
 
     param.set_guess(5.0)
     assert param.guess == 5.0
 
 
 def test_parameters_initialization():
-    symbols = [sp.Symbol("a"), sp.Symbol("b")]
-    params = Parameters.from_symbols(symbols)
+    guess = {"a": 3.0, "b": 4.0}
+    params = Parameters.from_guess(guess)
 
     assert len(params) == 2
     assert params["a"].name == "a"
+    assert params["a"].guess == 3.0
     assert params["b"].name == "b"
+    assert params["b"].guess == 4.0
 
 
 def test_parameters_fix_unfix():
-    symbols = [sp.Symbol("a"), sp.Symbol("b")]
-    params = Parameters.from_symbols(symbols)
+    names = ["a", "b"]
+    params = Parameters.from_names(names)
 
     params.fix("a")
     assert params["a"].fixed is True
@@ -62,8 +64,8 @@ def test_parameters_fix_unfix():
 
 
 def test_parameters_set_bounds():
-    symbols = [sp.Symbol("a"), sp.Symbol("b")]
-    params = Parameters.from_symbols(symbols)
+    names = ["a", "b"]
+    params = Parameters.from_names(names)
 
     bounds_dict = {"a": (0, 10), "b": (1, 5)}
     params.set_bounds(bounds_dict)  # type: ignore
@@ -73,8 +75,8 @@ def test_parameters_set_bounds():
 
 
 def test_parameters_set_guesses():
-    symbols = [sp.Symbol("a"), sp.Symbol("b")]
-    params = Parameters.from_symbols(symbols)
+    names = ["a", "b"]
+    params = Parameters.from_names(names)
 
     guess_dict = {"a": 2.0, "b": 3.0}
     params.set_guesses(guess_dict)  # type: ignore

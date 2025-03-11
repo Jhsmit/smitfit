@@ -15,15 +15,15 @@ from smitfit.typing import Numerical
 class Parameter:
     """A mutable parameter class that supports method chaining"""
 
-    symbol: sp.Symbol
+    name: str
     guess: Numerical = 1.0
     lower_bound: Optional[Numerical] = None
     upper_bound: Optional[Numerical] = None
     fixed: bool = False  # TODO fixed per array element?
 
     @property
-    def name(self) -> str:
-        return self.symbol.name
+    def symbol(self) -> sp.Symbol:
+        return sp.Symbol(self.name)
 
     @property
     def shape(self) -> tuple[int, ...]:
@@ -87,14 +87,18 @@ class Parameters:
         return Parameters(self.to_list() + other.to_list())
 
     @classmethod
-    def from_symbols(
+    def from_guess(
         cls,
-        symbols: Iterable[sp.Symbol],
+        guess: dict[str, Numerical],
     ) -> Parameters:
-        symbol_dict = {symbol.name: symbol for symbol in sorted(symbols, key=str)}
+        return cls([Parameter(name, guess=guess) for name, guess in guess.items()])
 
-        p_list = [Parameter(symbol) for symbol in symbol_dict.values()]
-        return cls(p_list)
+    @classmethod
+    def from_names(
+        cls,
+        names: Iterable[str],
+    ) -> Parameters:
+        return cls([Parameter(name) for name in names])
 
     @property
     def symbols(self) -> set[sp.Symbol]:
@@ -177,12 +181,12 @@ class Parameters:
         data = [asdict(p) for p in self]
 
         try:
-            import polars as pl
+            import polars as pl  # type: ignore
 
             return pl.DataFrame(data)
         except ImportError:
             try:
-                import pandas as pd
+                import pandas as pd  # type: ignore
 
                 return pd.DataFrame(data)
             except ImportError:
