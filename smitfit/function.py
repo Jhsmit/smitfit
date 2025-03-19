@@ -1,11 +1,10 @@
-import re
-from fnmatch import fnmatch
 from typing import Iterable
 
 import sympy as sp
 
-from smitfit.expr import as_expr, Expr
-from smitfit.parameter import Parameter, Parameters
+from smitfit.expr import Expr, as_expr
+from smitfit.model import _define_parameters
+from smitfit.parameter import Parameters
 from smitfit.typing import Numerical
 
 
@@ -47,29 +46,9 @@ class Function:
     def y_symbols(self) -> set[sp.Symbol]:
         return set([self.y])
 
-    # #TODO copy/paste code with Model -> make function
+    # #TODO copy/paste code with Model -> baseclass?
     def define_parameters(
         self, parameters: dict[str, Numerical] | Iterable[str] | str = "*"
     ) -> Parameters:
-        symbols = {s.name: s for s in self.x_symbols}
-        if parameters == "*":
-            params = [Parameter(symbol) for symbol in self.x_symbols]
-        elif isinstance(parameters, str):
-            if "*" in parameters:  # fnmatch
-                params = [
-                    Parameter(symbol)
-                    for symbol in self.x_symbols
-                    if fnmatch(symbol.name, parameters)
-                ]
-            else:
-                # split by comma, whiteplace, etc
-                params = [Parameter(symbols[k.strip()]) for k in re.split(r"[,;\s]+", parameters)]
-
-        elif isinstance(parameters, dict):
-            params = [Parameter(symbols[k], guess=v) for k, v in parameters.items()]
-        elif isinstance(parameters, Iterable):
-            params = [Parameter(symbols[k]) for k in parameters]
-        else:
-            raise TypeError("Invalid type")
-
-        return Parameters(params)
+        symbol_names = {s.name for s in self.x_symbols}
+        return _define_parameters(parameters, symbol_names)

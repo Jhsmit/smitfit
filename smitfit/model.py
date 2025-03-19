@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import re
 from fnmatch import fnmatch
-from typing import Iterable, cast, Dict, Union, Mapping
+from typing import Iterable, cast
 
 import sympy as sp
 from toposort import toposort
 
-from smitfit.expr import Expr, as_expr, _parse_subs_args
+from smitfit.expr import Expr, _parse_subs_args, as_expr
 from smitfit.parameter import Parameter, Parameters
 from smitfit.typing import Numerical
 
@@ -62,27 +62,7 @@ class Model:
         self, parameters: dict[str, Numerical] | Iterable[str] | str = "*"
     ) -> Parameters:
         symbol_names = {s.name for s in self.x_symbols}
-        if parameters == "*":
-            params = [Parameter(symbol.name) for symbol in self.x_symbols]
-        elif isinstance(parameters, str):
-            if "*" in parameters:  # fnmatch
-                params = [
-                    Parameter(symbol.name)
-                    for symbol in self.x_symbols
-                    if fnmatch(symbol.name, parameters)
-                ]
-            else:
-                # split by comma, whiteplace, etc
-                params = [Parameter(k.strip()) for k in re.split(r"[,;\s]+", parameters)]
-
-        elif isinstance(parameters, dict):
-            params = [Parameter(k, guess=v) for k, v in parameters.items() if k in symbol_names]
-        elif isinstance(parameters, Iterable):
-            params = [Parameter(k) for k in parameters if k in symbol_names]
-        else:
-            raise TypeError("Invalid type")
-
-        return Parameters(params)
+        return _define_parameters(parameters, symbol_names)
 
     def subs(self, *args, **kwargs) -> Model:
         """
@@ -113,3 +93,25 @@ class Model:
             new_model[symbol] = new_expr
 
         return Model(new_model)
+
+
+def _define_parameters(
+    parameters: dict[str, Numerical] | Iterable[str] | str, symbol_names: set[str]
+) -> Parameters:
+    if parameters == "*":
+        params = [Parameter(name) for name in symbol_names]
+    elif isinstance(parameters, str):
+        if "*" in parameters:  # fnmatch
+            params = [Parameter(name) for name in symbol_names if fnmatch(name, parameters)]
+        else:
+            # split by comma, whiteplace, etc
+            params = [Parameter(k.strip()) for k in re.split(r"[,;\s]+", parameters)]
+
+    elif isinstance(parameters, dict):
+        params = [Parameter(k, guess=v) for k, v in parameters.items() if k in symbol_names]
+    elif isinstance(parameters, Iterable):
+        params = [Parameter(k) for k in parameters if k in symbol_names]
+    else:
+        raise TypeError("Invalid type")
+
+    return Parameters(params)
