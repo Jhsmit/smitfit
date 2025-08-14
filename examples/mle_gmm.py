@@ -113,7 +113,7 @@ hess = nd.Hessian(func)(x)
 hess_inv = np.linalg.inv(hess)
 # %%
 
-# the covariance matrix is now 2*s_squared * hess_inv
+# in MLE, the covariance matrix is the inverse of the Hessian
 cov_mat = hess_inv
 errors_fisher = unpack(np.sqrt(np.diag(cov_mat)), fit_parameter_shapes)
 errors_fisher
