@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import cached_property
-from typing import Optional, Dict, Any
+from typing import Callable, Optional
 
 import numpy as np
 import sympy as sp
@@ -44,6 +44,22 @@ class CompositeExpr(Expr):
                 setattr(result, attr_name, getattr(self, attr_name))
 
         return result
+
+
+class FuncExpr(CompositeExpr):
+    def __init__(self, func: Callable, *args, **kwargs):
+        expr = {f"arg_{i}": as_expr(arg) for i, arg in enumerate(args)}
+        super().__init__(expr)
+
+        self.func = func
+        self.kwargs = kwargs
+
+    def __call__(self, **kwargs):
+        args = super().__call__(**kwargs).values()
+        return self.func(*args, **self.kwargs)
+
+    def __repr__(self) -> str:
+        return f"{self.func!r}({', '.join([arg.__repr__() for arg in self.expr.values()])})"
 
 
 class MarkovIVP(CompositeExpr):
