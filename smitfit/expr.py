@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from functools import cached_property
 from typing import Any, Callable, Iterable, Union, Mapping, Dict, Set, Tuple, Optional
+import warnings
 
 import numpy as np
 import sympy as sp
@@ -211,6 +212,7 @@ class SympyMatrixExpr(Expr):
 
 class CustomFunction(Expr):
     def __init__(self, func: Callable, symbols: Iterable[sp.Symbol]):
+        warnings.warn("CustomFunction is deprecated, use FuncExpr instead", DeprecationWarning)
         self.func = func
         self.symbols = set(symbols)
 
